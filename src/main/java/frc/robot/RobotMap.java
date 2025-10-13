@@ -78,4 +78,14 @@ public class RobotMap {
   public static double R_TRACK_WIDTH_INCHES = 28.5;
   public static double R_WHEEL_BASE_INCHES  = 28.5;
   public static double R_BASE_RADIUS_INCHES = 14.25 * Math.sqrt(2);
+
+  // [D]rive module CAN IDs
+  public static int D_FRONT_RIGHT_DRIVE_MOTOR_CAN_ID = RoboRioMap.CAN_2;
+  public static int D_FRONT_RIGHT_TURN_MOTOR_CAN_ID  = RoboRioMap.CAN_3;
+  public static int D_FRONT_LEFT_DRIVE_MOTOR_CAN_ID = RoboRioMap.CAN_4;
+  public static int D_FRONT_LEFT_TURN_MOTOR_CAN_ID  = RoboRioMap.CAN_5;
+  public static int D_BACK_RIGHT_DRIVE_MOTOR_CAN_ID = RoboRioMap.CAN_8;
+  public static int D_BACK_RIGHT_TURN_MOTOR_CAN_ID  = RoboRioMap.CAN_9;
+  public static int D_BACK_LEFT_DRIVE_MOTOR_CAN_ID = RoboRioMap.CAN_6;
+  public static int D_BACK_LEFT_TURN_MOTOR_CAN_ID  = RoboRioMap.CAN_7;
 }
