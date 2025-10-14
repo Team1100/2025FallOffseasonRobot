@@ -6,6 +6,9 @@ package frc.robot;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -69,5 +72,24 @@ public final class Constants {
 
     public static final int kDrivingMotorCurrentLimit = 80; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
+
+    // Chassis angular offsets, in radians, for each module
+    public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
+    public static final double kFrontRightChassisAngularOffset = 0;
+    public static final double kBackLeftChassisAngularOffset = Math.PI;
+    public static final double kBackRightChassisAngularOffset = Math.PI / 2;
   }
+
+  public static class DriveConstants {
+    // Maximum speed of the robot
+    public static final double kMaxSpeedMetersPerSecond = 4.92;
+    public static final double kMaxAngularSpeed = Math.PI * 2;
+
+    public static final Translation2d kFrontLeftLocation = new Translation2d(0.381, 0.381);
+    public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381);
+    public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381);
+    public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381);
+    public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(kFrontLeftLocation,kFrontRightLocation,kBackLeftLocation,kBackRightLocation);
+  }
+
 }
