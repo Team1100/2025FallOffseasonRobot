@@ -10,6 +10,8 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,6 +19,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
+import frc.robot.utils.TargetPose;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -95,6 +99,11 @@ public final class Constants {
     public static final double kMaxSpeedMetersPerSecond = 4.92;
     public static final double kMaxAngularSpeed = Math.PI * 2;
 
+    // Chassis configuration
+    public static final double kTrackWidth = Units.inchesToMeters(26.5);
+    // Distance between centers of right and left wheels on robot
+    public static final double kWheelBase = Units.inchesToMeters(26.5);
+
     public static final Translation2d kFrontLeftLocation = new Translation2d(0.381, 0.381);
     public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381);
     public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381);
@@ -102,6 +111,19 @@ public final class Constants {
     public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(kFrontLeftLocation,kFrontRightLocation,kBackLeftLocation,kBackRightLocation);
   }
 
+  public static final class FieldLocationConstants {
+    public static final double kMidfieldX = 8.75;
+    public static final Pose2d kBlueReefCenter = new Pose2d(4.5, 4, Rotation2d.kZero);
+    public static final Pose2d kRedReefCenter = new Pose2d(13, 4, Rotation2d.kZero);
+
+    public static final Translation2d kReefLeftScoreTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(5.75), -0.2);
+    public static final Translation2d kReefRightScoreTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(5.75), 0.2);//Should be the same but with -y
+
+    public static final TargetPose kRedCoralA1Pose = new TargetPose(new Pose2d(15.878, 0.773, new Rotation2d(Units.degreesToRadians(125))), true);
+    public static final TargetPose kRedCoralA2Pose = new TargetPose(new Pose2d(16.858, 1.382, new Rotation2d(Units.degreesToRadians(125))), true);
+
+  }
+  
   public static final class VisionConstants {
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     
