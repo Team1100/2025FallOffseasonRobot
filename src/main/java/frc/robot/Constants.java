@@ -92,4 +92,9 @@ public final class Constants {
     public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(kFrontLeftLocation,kFrontRightLocation,kBackLeftLocation,kBackRightLocation);
   }
 
+  public static class OIConstants {
+    public static final double kDriveDeadband = 0.05;
+    public static final boolean kDriveIsFieldRelative = true;
+  }
+
 }

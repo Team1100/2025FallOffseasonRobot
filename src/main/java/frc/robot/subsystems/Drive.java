@@ -46,6 +46,16 @@ public class Drive extends SubsystemBase {
     return m_Gyro.getAngle(IMUAxis.kZ);
   }
 
+  public ChassisSpeeds getMeasuredSpeeds() {
+    SwerveModuleState[] moduleStates = new SwerveModuleState[4];
+    moduleStates[0] = m_frontleft.getState();
+    moduleStates[1] = m_frontright.getState();
+    moduleStates[2] = m_backleft.getState();
+    moduleStates[3] = m_backright.getState();
+
+    return Constants.DriveConstants.kKinematics.toChassisSpeeds(moduleStates);
+  }
+
   private void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.DriveConstants.kMaxSpeedMetersPerSecond);
     m_frontleft.setDesiredState(desiredStates[0]);
