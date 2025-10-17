@@ -4,15 +4,23 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.testingdashboard.SubsystemBase;
+import frc.robot.testingdashboard.TDSendable;
 
 public class Drive extends SubsystemBase {
   /** Creates a new Drive. */
@@ -30,9 +38,25 @@ public class Drive extends SubsystemBase {
 
 
   private final ADIS16470_IMU m_Gyro = new ADIS16470_IMU();  
+  private SwerveDrivePoseEstimator m_DrivePoseEstimator;
+  private final Field2d m_Field;
+
 
   private Drive() {
     super("Drive");
+
+    m_DrivePoseEstimator = new SwerveDrivePoseEstimator(
+      Constants.DriveConstants.kKinematics,
+      Rotation2d.fromDegrees(m_Gyro.getAngle(IMUAxis.kZ)),
+      new SwerveModulePosition[] {
+        m_frontleft.getPosition(),
+        m_frontright.getPosition(),
+        m_backleft.getPosition(),
+        m_backright.getPosition()
+      },
+      new Pose2d());
+      m_Field = new Field2d();
+      new TDSendable(this,"Field", "Position", m_Field);
   }
 
   public static Drive getInstance() {
@@ -43,7 +67,36 @@ public class Drive extends SubsystemBase {
   }
 
   public double getHeading() {
-    return m_Gyro.getAngle(IMUAxis.kZ);
+    return getPose().getRotation().getDegrees();
+  }
+
+  public Pose2d getPose() {
+    return m_DrivePoseEstimator.getEstimatedPosition();
+  }
+
+  public void resetOdometry(Pose2d pose) {
+    m_DrivePoseEstimator.resetPosition(Rotation2d.fromDegrees(m_Gyro.getAngle(IMUAxis.kZ)), 
+      new SwerveModulePosition[] {
+        m_frontleft.getPosition(),
+        m_frontright.getPosition(),
+        m_backleft.getPosition(),
+        m_backright.getPosition()
+      },
+      pose);
+  }
+
+public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3,N1> stdDevs) {
+  m_DrivePoseEstimator.addVisionMeasurement(pose, timestamp, stdDevs);
+}
+
+  public ChassisSpeeds getMeasuredSpeeds() {
+    SwerveModuleState[] moduleStates = new SwerveModuleState[4];
+    moduleStates[0] = m_frontleft.getState();
+    moduleStates[1] = m_frontright.getState();
+    moduleStates[2] = m_backleft.getState();
+    moduleStates[3] = m_backright.getState();
+
+    return Constants.DriveConstants.kKinematics.toChassisSpeeds(moduleStates);
   }
 
   private void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -64,16 +117,26 @@ public class Drive extends SubsystemBase {
     double ySpeedCommanded = ySpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
     double rotCommanded = rot * Constants.DriveConstants.kMaxAngularSpeed;
 
-
     ChassisSpeeds chassisSpeeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedCommanded, ySpeedCommanded, rotCommanded, Rotation2d.fromDegrees(getHeading())) :
       new ChassisSpeeds(xSpeedCommanded, ySpeedCommanded, rotCommanded);
     drive(chassisSpeeds);
   }
 
+  private void updateTD() {
+    m_Field.setRobotPose(getPose());
+  }
+
   @Override
   public void periodic() {
-    System.out.println("Hi my name is not calcium :(\nCheese");
     // This method will be called once per scheduler run
-    // Or will it? :(
+    // Or will it?
+    m_DrivePoseEstimator.update(Rotation2d.fromDegrees(m_Gyro.getAngle(IMUAxis.kZ)), new SwerveModulePosition[] {
+      m_frontleft.getPosition(),
+      m_frontright.getPosition(),
+      m_backleft.getPosition(),
+      m_backright.getPosition()
+    });
+    updateTD();
+    super.periodic();
   }
 }

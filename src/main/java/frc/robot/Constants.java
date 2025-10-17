@@ -111,6 +111,11 @@ public final class Constants {
     public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(kFrontLeftLocation,kFrontRightLocation,kBackLeftLocation,kBackRightLocation);
   }
 
+  public static class OIConstants {
+    public static final double kDriveDeadband = 0.05;
+    public static final boolean kDriveIsFieldRelative = true;
+  }
+
   public static final class FieldLocationConstants {
     public static final double kMidfieldX = 8.75;
     public static final Pose2d kBlueReefCenter = new Pose2d(4.5, 4, Rotation2d.kZero);
