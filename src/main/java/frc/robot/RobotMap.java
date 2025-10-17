@@ -94,5 +94,7 @@ public class RobotMap {
   
 
 
+  // Bool!
+  public static boolean P_ENABLED = true;
 
 }
