@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -17,21 +19,23 @@ public class PivotyThing extends SubsystemBase {
 
   private static PivotyThing m_PivotyThing = null; 
   
-  SparkMax m_FLeftSparkMax;
+  SparkMax m_PSparkMax;
 
   SparkMaxConfig m_SparkMaxConfig;
+
+  TDNumber m_PivotCuttentOutput;
 
   private PivotyThing() {
     super("PivotyThing");
 
-    if (-1.F_ENABLED) {
-      m_FLeftSparkMax = new SparkMax(-1.F_LEFTMOTOR, MotorType.kBrushless);
+    if (RobotMap.P_ENABLED) {
+      m_PSparkMax = new SparkMax(-1, MotorType.kBrushless);
 
       m_SparkMaxConfig = new SparkMaxConfig();
       
-      //m_FLeftSparkMax.configure(m_SparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters); ?
+      m_PSparkMax.configure(m_SparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters); 
 
-      //m_FunnelCurrentOutput = new TDNumber(this, "Funnel", "Motor Current"); ?
+      m_PivotCuttentOutput = new TDNumber(this, "Funnel", "Motor Current"); 
     }
   }
 

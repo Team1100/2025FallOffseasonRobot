@@ -90,6 +90,6 @@ public class RobotMap {
   public static int D_BACK_LEFT_TURN_MOTOR_CAN_ID  = RoboRioMap.CAN_7;
 
   // Bool!
-  public boolean P_ENABLED;
+  public static boolean P_ENABLED = true;
 
 }
