@@ -6,6 +6,22 @@ package frc.robot;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
+import frc.robot.utils.TargetPose;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -17,6 +33,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final String whoLetTheDogsOut = "alan";
   }
 
   public static class DriveModuleConstants {
@@ -69,5 +86,66 @@ public final class Constants {
 
     public static final int kDrivingMotorCurrentLimit = 80; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
+
+    // Chassis angular offsets, in radians, for each module
+    public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
+    public static final double kFrontRightChassisAngularOffset = 0;
+    public static final double kBackLeftChassisAngularOffset = Math.PI;
+    public static final double kBackRightChassisAngularOffset = Math.PI / 2;
   }
+
+  public static class DriveConstants {
+    // Maximum speed of the robot
+    public static final double kMaxSpeedMetersPerSecond = 4.92;
+    public static final double kMaxAngularSpeed = Math.PI * 2;
+
+    // Chassis configuration
+    public static final double kTrackWidth = Units.inchesToMeters(26.5);
+    // Distance between centers of right and left wheels on robot
+    public static final double kWheelBase = Units.inchesToMeters(26.5);
+
+    public static final Translation2d kFrontLeftLocation = new Translation2d(0.381, 0.381);
+    public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381);
+    public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381);
+    public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381);
+    public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(kFrontLeftLocation,kFrontRightLocation,kBackLeftLocation,kBackRightLocation);
+  }
+
+  public static final class FieldLocationConstants {
+    public static final double kMidfieldX = 8.75;
+    public static final Pose2d kBlueReefCenter = new Pose2d(4.5, 4, Rotation2d.kZero);
+    public static final Pose2d kRedReefCenter = new Pose2d(13, 4, Rotation2d.kZero);
+
+    public static final Translation2d kReefLeftScoreTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(5.75), -0.2);
+    public static final Translation2d kReefRightScoreTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(5.75), 0.2);//Should be the same but with -y
+
+    public static final TargetPose kRedCoralA1Pose = new TargetPose(new Pose2d(15.878, 0.773, new Rotation2d(Units.degreesToRadians(125))), true);
+    public static final TargetPose kRedCoralA2Pose = new TargetPose(new Pose2d(16.858, 1.382, new Rotation2d(Units.degreesToRadians(125))), true);
+
+  }
+  
+  public static final class VisionConstants {
+    public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+    
+    // The standard deviations of our vision estimated poses, which affect correction rate
+    // TODO: (Fake values. Experiment and determine estimation noise on an actual robot.)
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+    
+    // Maximum ambiguity accepted as a valid result from the vision systems
+    public static final double kMaxValidAmbiguity = 0.2;
+    public static final double kMaxZError = 0.75;
+    public static final double kMaxRollError = 0.5;
+    public static final double kMaxPitchError = 0.5;
+
+    // Camera height from floor in inches
+    public static final double kCameraHeight = 9;
+    // Camera Width (Y) and Length (x) offsets in inches
+    public static final double kCameraWidthOffset = 25.5/2;
+    public static final double kCameraLengthOffset = 25.5/2;
+    // Camera mount angle in degrees
+    public static final double kCameraMountAngleYaw = 45;
+    
+    
+  };
 }
