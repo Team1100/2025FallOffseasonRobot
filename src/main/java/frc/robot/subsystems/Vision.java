@@ -8,7 +8,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Vision extends SubsystemBase {
   /** Creates a new Vision. */
-  public Vision() {}
+  public static Vision vision = null;
+  
+  private Vision() {}
+
+  public static Vision getInstance() {
+    if (vision == null) {
+      vision = new Vision();
+    }
+    return vision;
+  }
 
   @Override
   public void periodic() {
