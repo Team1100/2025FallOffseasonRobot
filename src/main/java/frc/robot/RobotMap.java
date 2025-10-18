@@ -89,6 +89,11 @@ public class RobotMap {
   public static int D_BACK_LEFT_DRIVE_MOTOR_CAN_ID = RoboRioMap.CAN_6;
   public static int D_BACK_LEFT_TURN_MOTOR_CAN_ID  = RoboRioMap.CAN_7;
 
+  // [I]ntake Subsystem
+  public static boolean I_ENABLED = true;
+  
+
+
   // Bool!
   public static boolean P_ENABLED = true;
 
