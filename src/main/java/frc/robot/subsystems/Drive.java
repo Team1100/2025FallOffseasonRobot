@@ -55,6 +55,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void drive(ChassisSpeeds speeds) {
+    //ChassisSpeeds limitSpeeds = limitRates(speeds);
     var swerveModuleStates = Constants.DriveConstants.kKinematics.toSwerveModuleStates(speeds);
     setModuleStates(swerveModuleStates);
   }
@@ -69,6 +70,8 @@ public class Drive extends SubsystemBase {
       new ChassisSpeeds(xSpeedCommanded, ySpeedCommanded, rotCommanded);
     drive(chassisSpeeds);
   }
+
+  
 
   @Override
   public void periodic() {
