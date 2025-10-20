@@ -6,9 +6,8 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.testingdashboard.TestingDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -24,10 +23,15 @@ public class RobotContainer {
   private final Drive m_drive;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    RobotMap.init();
+    
     m_drive = Drive.getInstance();
 
     // Configure the trigger bindings
     OI.getInstance().configureBindings();
+
+    // Create testing dashboard
+    TestingDashboard.getInstance().createTestingDashboard();
   }
 
   /**

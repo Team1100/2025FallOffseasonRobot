@@ -56,6 +56,17 @@ public class Drive extends SubsystemBase {
   private TDNumber td_backLeftAngle;
   private TDNumber td_backRightSpeed;
   private TDNumber td_backRightAngle;
+  private TDNumber td_poseX;
+  private TDNumber td_poseY;
+  private TDNumber td_poseRot;
+  private TDNumber td_frontLeftDriveCurrent;
+  private TDNumber td_frontLeftTurnCurrent;
+  private TDNumber td_frontRightDriveCurrent;
+  private TDNumber td_frontRightTurnCurrent;
+  private TDNumber td_backLeftDriveCurrent;
+  private TDNumber td_backLeftTurnCurrent;
+  private TDNumber td_backRightDriveCurrent;
+  private TDNumber td_backRightTurnCurrent;
  
   private Drive() {
     super("Drive");
@@ -87,6 +98,19 @@ public class Drive extends SubsystemBase {
       td_backLeftAngle = new TDNumber(this, "Module Speeds", "Back Left Angle");
       td_backRightSpeed = new TDNumber(this, "Module Speeds", "Back Right Speed");
       td_backRightAngle = new TDNumber(this, "Module Speeds", "Back Right Angle");
+
+      td_poseX = new TDNumber(this, "Robot Pose", "X");
+      td_poseY = new TDNumber(this, "Robot Pose", "Y");
+      td_poseRot = new TDNumber(this, "Robot Pose", "Rotation");
+
+      td_frontLeftDriveCurrent = new TDNumber(this, "Motor Electrical Currents","Front Left Drive Current");
+      td_frontLeftTurnCurrent = new TDNumber(this, "Motor Electrical Currents","Front Left Turning Current");
+      td_frontRightDriveCurrent = new TDNumber(this, "Motor Electrical Currents","Front Right Drive Current");
+      td_frontRightTurnCurrent = new TDNumber(this, "Motor Electrical Currents","Front Right Turning Current");
+      td_backLeftDriveCurrent = new TDNumber(this, "Motor Electrical Currents","Back Left Drive Current");
+      td_backLeftTurnCurrent = new TDNumber(this, "Motor Electrical Currents","Back Left Turning Current");
+      td_backRightDriveCurrent = new TDNumber(this, "Motor Electrical Currents","Back Right Drive Current");
+      td_backRightTurnCurrent = new TDNumber(this, "Motor Electrical Currents","Back Right Turning Current");
     }
 
   public static Drive getInstance() {
@@ -177,6 +201,19 @@ public class Drive extends SubsystemBase {
     td_backLeftAngle.set(backLeft.angle.getDegrees());
     td_backRightSpeed.set(backRight.speedMetersPerSecond);
     td_backRightAngle.set(backRight.angle.getDegrees());
+
+    td_poseX.set(getPose().getX());
+    td_poseY.set(getPose().getY());
+    td_poseRot.set(getHeading());
+
+    td_frontLeftDriveCurrent.set(m_frontleft.getDriveOutputCurrent());
+    td_frontLeftTurnCurrent.set(m_frontleft.getTurningOutputCurrent());
+    td_frontRightDriveCurrent.set(m_frontright.getDriveOutputCurrent());
+    td_frontRightTurnCurrent.set(m_frontright.getTurningOutputCurrent());
+    td_backLeftDriveCurrent.set(m_backleft.getDriveOutputCurrent());
+    td_backLeftTurnCurrent.set(m_backleft.getTurningOutputCurrent());
+    td_backRightDriveCurrent.set(m_backright.getDriveOutputCurrent());
+    td_backRightTurnCurrent.set(m_backright.getTurningOutputCurrent());
   }
 
   @Override
