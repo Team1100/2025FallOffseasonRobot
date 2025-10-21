@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.intake.Consume;
+import frc.robot.commands.intake.Expel;
 import frc.robot.utils.SwerveDriveInputs;
 
 public class OI {
@@ -41,7 +43,11 @@ public class OI {
     
 
     public void configureBindings() {
-        
+        m_operatorController.rightBumper().whileTrue(new Consume());
+        m_operatorController.leftBumper().whileTrue(new Expel());
+        m_operatorController.rightTrigger().whileTrue(new Expel());
+        m_operatorController.leftTrigger().whileTrue(new Consume());
+
     }
 
     public CommandXboxController getDriverController() {
