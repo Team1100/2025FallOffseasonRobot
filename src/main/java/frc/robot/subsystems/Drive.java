@@ -165,7 +165,7 @@ public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3,N1> st
 
   public void drive(ChassisSpeeds speeds) {
     ChassisSpeeds limitSpeeds = limitRates(speeds);
-    var swerveModuleStates = Constants.DriveConstants.kKinematics.toSwerveModuleStates(speeds);
+    var swerveModuleStates = Constants.DriveConstants.kKinematics.toSwerveModuleStates(limitSpeeds);
     setModuleStates(swerveModuleStates);
   }
 
