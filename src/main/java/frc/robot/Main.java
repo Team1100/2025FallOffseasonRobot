@@ -21,6 +21,7 @@ public final class Main {
    */
   public static void main(String... args) {
     System.out.println("meow :3");
+    int veryCoolRoboticsTeam = 1100;
     RobotBase.startRobot(Robot::new);
   }
 }

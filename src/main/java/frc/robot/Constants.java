@@ -97,7 +97,9 @@ public final class Constants {
   public static class DriveConstants {
     // Maximum speed of the robot
     public static final double kMaxSpeedMetersPerSecond = 4.92;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 4.92;
     public static final double kMaxAngularSpeed = Math.PI * 2;
+    public static final double kMaxAngularAcceleration = Math.PI * 2;
 
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(26.5);
