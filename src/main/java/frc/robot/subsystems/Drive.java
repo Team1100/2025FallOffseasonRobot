@@ -4,6 +4,12 @@
 
 package frc.robot.subsystems;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.PathPlannerLogging;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -18,11 +24,14 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.RobotMap;
 import frc.robot.testingdashboard.SubsystemBase;
 import frc.robot.testingdashboard.TDNumber;
@@ -42,10 +51,6 @@ public class Drive extends SubsystemBase {
   private final MAXSwerveModule m_backright = new MAXSwerveModule(
     RobotMap.D_BACK_RIGHT_DRIVE_MOTOR_CAN_ID, RobotMap.D_BACK_RIGHT_TURN_MOTOR_CAN_ID, Constants.DriveModuleConstants.kBackRightChassisAngularOffset);
 
-
-    
-
-
   private final ADIS16470_IMU m_Gyro = new ADIS16470_IMU();  
   private final Field2d m_Field;
 
@@ -64,8 +69,6 @@ public class Drive extends SubsystemBase {
   ChassisSpeeds m_requestSpeeds = new ChassisSpeeds();
   ChassisSpeeds m_limitSpeeds = new ChassisSpeeds();
   double m_driveTime = 0;
-
-
 
 
   private TDNumber td_xInput;
@@ -137,7 +140,43 @@ public class Drive extends SubsystemBase {
       td_backLeftTurnCurrent = new TDNumber(this, "Motor Electrical Currents","Back Left Turning Current");
       td_backRightDriveCurrent = new TDNumber(this, "Motor Electrical Currents","Back Right Drive Current");
       td_backRightTurnCurrent = new TDNumber(this, "Motor Electrical Currents","Back Right Turning Current");
+
+      DCMotor neovortex = DCMotor.getNEO(1).withReduction(Constants.DriveModuleConstants.kDrivingMotorReduction);
+
+      ModuleConfig kSwerveModuleConfig = new ModuleConfig(Constants.DriveModuleConstants.kWheelDiameterMeters/2, Constants.DriveConstants.kMaxSpeedMetersPerSecond, 
+      Constants.AutoConstants.kPathFollowerWheelCoeficientFriction, neovortex, Constants.DriveModuleConstants.kDrivingMotorCurrentLimit, 4);
+      AutoBuilder.configure(
+        this::getPose, // Robot pose supplier
+        this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+        this::getMeasuredSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        new PPHolonomicDriveController(Constants.AutoConstants.kPathFollowerTranslationPID, Constants.AutoConstants.kPathFollowerRotationPID),
+        new RobotConfig(Constants.AutoConstants.kPathFollowerMass, Constants.AutoConstants.kPathFollowerMomentOfInertia, kSwerveModuleConfig, Constants.DriveModuleConstants.m_ModulePositions),
+        () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+        },
+        this // Reference to this subsystem to set requirements
+      );
+      PathPlannerLogging.setLogCurrentPoseCallback((pose)->{
+        m_Field.getObject("AutoCurrent").setPose(pose);
+      });
+      PathPlannerLogging.setLogTargetPoseCallback((pose)->{
+        m_Field.getObject("AutoTarget").setPose(pose);
+      });
+      PathPlannerLogging.setLogActivePathCallback((poses)->{
+        m_Field.getObject("Auto Active Path").setPoses(poses);
+      });
     }
+  
+
 
   public static Drive getInstance() {
     if (m_Drive == null) {

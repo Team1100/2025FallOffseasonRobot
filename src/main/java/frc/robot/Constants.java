@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.config.PIDConstants;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -19,6 +20,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.utils.TargetPose;
 
@@ -92,6 +94,15 @@ public final class Constants {
     public static final double kFrontRightChassisAngularOffset = 0;
     public static final double kBackLeftChassisAngularOffset = Math.PI;
     public static final double kBackRightChassisAngularOffset = Math.PI / 2;
+
+    // Drive constants for AutoBuilder configuration
+    // Distance from robot center to furthest module
+    public static final double kBaseRadius = Units.inchesToMeters(RobotMap.R_BASE_RADIUS_INCHES);
+    public static final Translation2d[] m_ModulePositions = new Translation2d[] { DriveConstants.kFrontRightLocation, DriveConstants.kFrontLeftLocation, DriveConstants.kBackRightLocation, DriveConstants.kBackLeftLocation };
+
+    // SPARK MAX CAN IDs are in RobotMap
+
+    public static final boolean kGyroReversed = false;
   }
 
   public static class DriveConstants {
@@ -117,6 +128,37 @@ public final class Constants {
     public static final double kDriveDeadband = 0.05;
     public static final boolean kDriveIsFieldRelative = true;
   }
+
+  public static final class AutoConstants {
+    public static final double kMaxSpeedMetersPerSecond = 4.92;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 4.92;
+    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+
+    public static final double kPXController = 1;
+    public static final double kPYController = 1;
+    public static final double kPThetaController = 10;
+    public static final double kIThetaController = 0.1;
+    public static final double kDThetaController = 0.05;
+    public static final double kThetaTolerance = 0.02;//radians
+    public static final double kTranslationTolerance = 0.025;//meters
+    public static final int kReefFinishedPeriodics = 25;
+
+    // Constraint for the motion profiled robot angle controller
+    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
+        kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+  
+    // AutoBuilder dynamic robot constriants
+    public static final PIDConstants kPathFollowerTranslationPID = new PIDConstants(5.0, 0.0, 0.0); // Translation PID constants
+    public static final PIDConstants kPathFollowerRotationPID = new PIDConstants(5.0, 0.0, 0.0); // Rotation PID constants    
+
+    public static final double kPathFollowerMaxSpeed = Constants.AutoConstants.kMaxSpeedMetersPerSecond; // Max module speed, in m/s
+    public static final double kPathFollowerBaseRadius = Constants.DriveModuleConstants.kBaseRadius; // Drive base radius in meters
+    public static final double kPathFollowerMass = 52.1631; // 115 pounds
+    public static final double kPathFollowerMomentOfInertia = 6.2; // Total guess. Rough estimate of l^2 + w^2 * m * 1/12
+    public static final double kPathFollowerWheelCoeficientFriction = 1.2; // Total guess. pathplaner default
+
+}
 
   public static final class FieldLocationConstants {
     public static final double kMidfieldX = 8.75;
