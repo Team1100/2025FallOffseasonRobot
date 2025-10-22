@@ -68,6 +68,32 @@ public class Drive extends SubsystemBase {
 
 
 
+  private TDNumber td_xInput;
+  private TDNumber td_yInput;
+  private TDNumber td_rotInput;
+  private TDNumber td_xMeasured;
+  private TDNumber td_yMeasured;
+  private TDNumber td_rotMeasured;
+  private TDNumber td_frontLeftSpeed;
+  private TDNumber td_frontLeftAngle;
+  private TDNumber td_frontRightSpeed;
+  private TDNumber td_frontRightAngle;
+  private TDNumber td_backLeftSpeed;
+  private TDNumber td_backLeftAngle;
+  private TDNumber td_backRightSpeed;
+  private TDNumber td_backRightAngle;
+  private TDNumber td_poseX;
+  private TDNumber td_poseY;
+  private TDNumber td_poseRot;
+  private TDNumber td_frontLeftDriveCurrent;
+  private TDNumber td_frontLeftTurnCurrent;
+  private TDNumber td_frontRightDriveCurrent;
+  private TDNumber td_frontRightTurnCurrent;
+  private TDNumber td_backLeftDriveCurrent;
+  private TDNumber td_backLeftTurnCurrent;
+  private TDNumber td_backRightDriveCurrent;
+  private TDNumber td_backRightTurnCurrent;
+ 
   private Drive() {
     super("Drive");
 
@@ -83,7 +109,35 @@ public class Drive extends SubsystemBase {
       new Pose2d());
       m_Field = new Field2d();
       new TDSendable(this,"Field", "Position", m_Field);
-  }
+      
+      td_xInput = new TDNumber(this, "Drive Input", "X Input Speed");
+      td_yInput = new TDNumber(this, "Drive Input", "Y Input Speed");
+      td_rotInput = new TDNumber(this, "Drive Input", "Rotation Input");
+      td_xMeasured = new TDNumber(this, "Measured Speeds", "X Measured Speed");
+      td_yMeasured = new TDNumber(this, "Measured Speeds", "Y Measured Speed");
+      td_rotMeasured = new TDNumber(this, "Measured Speeds", "Rotation Measured");
+      td_frontLeftSpeed = new TDNumber(this, "Module Speeds", "Front Left Speed");
+      td_frontLeftAngle = new TDNumber(this, "Module Speeds", "Front Left Angle");
+      td_frontRightSpeed = new TDNumber(this, "Module Speeds", "Front Right Speed");
+      td_frontRightAngle = new TDNumber(this, "Module Speeds", "Front Right Angle");
+      td_backLeftSpeed = new TDNumber(this, "Module Speeds", "Back Left Speed");
+      td_backLeftAngle = new TDNumber(this, "Module Speeds", "Back Left Angle");
+      td_backRightSpeed = new TDNumber(this, "Module Speeds", "Back Right Speed");
+      td_backRightAngle = new TDNumber(this, "Module Speeds", "Back Right Angle");
+
+      td_poseX = new TDNumber(this, "Robot Pose", "X");
+      td_poseY = new TDNumber(this, "Robot Pose", "Y");
+      td_poseRot = new TDNumber(this, "Robot Pose", "Rotation");
+
+      td_frontLeftDriveCurrent = new TDNumber(this, "Motor Electrical Currents","Front Left Drive Current");
+      td_frontLeftTurnCurrent = new TDNumber(this, "Motor Electrical Currents","Front Left Turning Current");
+      td_frontRightDriveCurrent = new TDNumber(this, "Motor Electrical Currents","Front Right Drive Current");
+      td_frontRightTurnCurrent = new TDNumber(this, "Motor Electrical Currents","Front Right Turning Current");
+      td_backLeftDriveCurrent = new TDNumber(this, "Motor Electrical Currents","Back Left Drive Current");
+      td_backLeftTurnCurrent = new TDNumber(this, "Motor Electrical Currents","Back Left Turning Current");
+      td_backRightDriveCurrent = new TDNumber(this, "Motor Electrical Currents","Back Right Drive Current");
+      td_backRightTurnCurrent = new TDNumber(this, "Motor Electrical Currents","Back Right Turning Current");
+    }
 
   public static Drive getInstance() {
     if (m_Drive == null) {
@@ -111,9 +165,9 @@ public class Drive extends SubsystemBase {
       pose);
   }
 
-public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3,N1> stdDevs) {
-  m_DrivePoseEstimator.addVisionMeasurement(pose, timestamp, stdDevs);
-}
+  public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3,N1> stdDevs) {
+    m_DrivePoseEstimator.addVisionMeasurement(pose, timestamp, stdDevs);
+  }
 
   public ChassisSpeeds getMeasuredSpeeds() {
     SwerveModuleState[] moduleStates = new SwerveModuleState[4];
@@ -143,6 +197,10 @@ public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3,N1> st
     double xSpeedCommanded = xSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedCommanded = ySpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
     double rotCommanded = rot * Constants.DriveConstants.kMaxAngularSpeed;
+
+    td_xInput.set(xSpeedCommanded);
+    td_yInput.set(ySpeedCommanded);
+    td_rotInput.set(rotCommanded);
 
     ChassisSpeeds chassisSpeeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedCommanded, ySpeedCommanded, rotCommanded, Rotation2d.fromDegrees(getHeading())) :
       new ChassisSpeeds(xSpeedCommanded, ySpeedCommanded, rotCommanded);
@@ -189,6 +247,38 @@ public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3,N1> st
 
   private void updateTD() {
     m_Field.setRobotPose(getPose());
+
+    ChassisSpeeds measuredSpeeds = getMeasuredSpeeds();
+    td_xMeasured.set(measuredSpeeds.vxMetersPerSecond);
+    td_yMeasured.set(measuredSpeeds.vyMetersPerSecond);
+    td_rotMeasured.set(measuredSpeeds.omegaRadiansPerSecond);
+
+    SwerveModuleState frontLeft = m_frontleft.getState();
+    SwerveModuleState frontRight = m_frontright.getState();
+    SwerveModuleState backLeft = m_backleft.getState();
+    SwerveModuleState backRight = m_backright.getState();
+    
+    td_frontLeftSpeed.set(frontLeft.speedMetersPerSecond);
+    td_frontLeftAngle.set(frontLeft.angle.getDegrees());
+    td_frontRightSpeed.set(frontRight.speedMetersPerSecond);
+    td_frontRightAngle.set(frontRight.angle.getDegrees());
+    td_backLeftSpeed.set(backLeft.speedMetersPerSecond);
+    td_backLeftAngle.set(backLeft.angle.getDegrees());
+    td_backRightSpeed.set(backRight.speedMetersPerSecond);
+    td_backRightAngle.set(backRight.angle.getDegrees());
+
+    td_poseX.set(getPose().getX());
+    td_poseY.set(getPose().getY());
+    td_poseRot.set(getHeading());
+
+    td_frontLeftDriveCurrent.set(m_frontleft.getDriveOutputCurrent());
+    td_frontLeftTurnCurrent.set(m_frontleft.getTurningOutputCurrent());
+    td_frontRightDriveCurrent.set(m_frontright.getDriveOutputCurrent());
+    td_frontRightTurnCurrent.set(m_frontright.getTurningOutputCurrent());
+    td_backLeftDriveCurrent.set(m_backleft.getDriveOutputCurrent());
+    td_backLeftTurnCurrent.set(m_backleft.getTurningOutputCurrent());
+    td_backRightDriveCurrent.set(m_backright.getDriveOutputCurrent());
+    td_backRightTurnCurrent.set(m_backright.getTurningOutputCurrent());
   }
 
   @Override
