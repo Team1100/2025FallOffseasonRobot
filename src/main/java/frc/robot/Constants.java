@@ -155,4 +155,8 @@ public final class Constants {
     
     
   };
+
+  public static final class IntakeConstants {
+    public static final double kIntakeSpeed = 0.5;
+  }
 }
