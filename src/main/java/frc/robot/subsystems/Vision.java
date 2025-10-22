@@ -5,18 +5,24 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotMap;
 
 public class Vision extends SubsystemBase {
   /** Creates a new Vision. */
-  public static Vision vision = null;
+  public static Vision m_Vision = null;
   
-  private Vision() {}
+  private Vision() {
+    super("Vision");
+    if (RobotMap.V_ENABLED) {
+      return;
+    }  
+  }
 
   public static Vision getInstance() {
-    if (vision == null) {
-      vision = new Vision();
+    if (m_Vision == null) {
+      m_Vision = new Vision();
     }
-    return vision;
+    return m_Vision;
   }
 
   @Override
