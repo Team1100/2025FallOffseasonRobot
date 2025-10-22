@@ -60,42 +60,12 @@ public class Drive extends SubsystemBase {
   //SwerveCrivePoseEstimator class for tracking robot pose
   SwerveDrivePoseEstimator m_DrivePoseEstimator;
 
-  //testing dashboard instances
-  TDNumber TDxSpeedCommanded;
-  TDNumber TDySpeedCommanded;
-  TDNumber TDrotSpeedCommanded;
-
-  TDNumber TDFrontLeftDriveSpeed;
-  TDNumber TDFrontLeftAngle;
-  TDNumber TDFrontRightDriveSpeed;
-  TDNumber TDFrontRightAngle;
-  TDNumber TDBackLeftDriveSpeed;
-  TDNumber TDBackLeftAngle;
-  TDNumber TDBackRightDriveSpeed;
-  TDNumber TDBackRightAngle;
-
-  TDNumber TDxSpeedMeasured;
-  TDNumber TDySpeedMeasured;
-  TDNumber TDrotSpeedMeasured;
-
-  TDNumber TDPoseX;
-  TDNumber TDPoseY;
-  TDNumber TDPoseAngle;
-  TDNumber TDGyroAngle;
 
   ChassisSpeeds m_requestSpeeds = new ChassisSpeeds();
   ChassisSpeeds m_limitSpeeds = new ChassisSpeeds();
   double m_driveTime = 0;
 
-  TDNumber m_DLeftFrontCurrentOutput;
-  TDNumber m_DRightFrontCurrentOutput;
-  TDNumber m_DLeftBackCurrentOutput;
-  TDNumber m_DRightBackCurrentOutput;
 
-  TDNumber m_TLeftFrontCurrentOutput;
-  TDNumber m_TRightFrontCurrentOutput;
-  TDNumber m_TLeftBackCurrentOutput;
-  TDNumber m_TRightBackCurrentOutput;
 
 
   private Drive() {
