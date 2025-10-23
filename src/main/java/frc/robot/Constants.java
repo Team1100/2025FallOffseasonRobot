@@ -33,6 +33,8 @@ import frc.robot.utils.TargetPose;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final double robotPeriodTime = 0.02;
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final String whoLetTheDogsOut = "alan";
@@ -200,5 +202,23 @@ public final class Constants {
 
   public static final class IntakeConstants {
     public static final double kIntakeSpeed = 0.5;
+  }
+
+  public static final class PivotConstants {
+    public static final boolean kPivotTuningMode = false;
+    
+    public static final double kPivotGearRatio = 1.0/48.0;
+    public static final double kPivotConversionFactor = 2 * Math.PI * kPivotGearRatio;
+    public static final double kPivotSpeedConversionFactor = kPivotConversionFactor / 60;
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kG = 0;
+    public static final double kS = 0;
+    public static final double kV = 0;
+
+    public static final double kMinAngle = 0;
+    public static final double kMaxAngle = Math.PI / 2;
+    public static final double kPivotToleranceRadians = 0.1;
   }
 }
