@@ -15,6 +15,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.Constants;
@@ -36,6 +37,8 @@ public class PivotyThing extends SubsystemBase {
   TrapezoidProfile.State m_currentState;
   TrapezoidProfile.State m_targetState;
 
+  double m_setAngle;
+
   TDNumber m_pivotCurrentOutput;
 
   private PivotyThing() {
@@ -51,6 +54,9 @@ public class PivotyThing extends SubsystemBase {
       m_SparkMaxConfig.encoder.positionConversionFactor(Constants.PivotConstants.kPivotConversionFactor);
       m_PSparkMax.configure(m_SparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters); 
       m_pivotEncoder = m_PSparkMax.getEncoder();
+      m_currentState = new TrapezoidProfile.State(getCurrentAngle(), 0);
+      m_targetState = new TrapezoidProfile.State(getCurrentAngle(), 0);
+      m_setAngle = getCurrentAngle();
 
       m_pivotCurrentOutput = new TDNumber(this, "Funnel", "Motor Current"); 
 
@@ -65,13 +71,30 @@ public class PivotyThing extends SubsystemBase {
     }
     return m_PivotyThing;
   }
+
+  public void setTargetAngle(double angle) {
+    double fixedAngle = MathUtil.clamp(angle, Constants.PivotConstants.kMinAngle, Constants.PivotConstants.kMaxAngle);
+    if (fixedAngle != m_setAngle) {
+      m_setAngle = fixedAngle;
+      m_targetState = new TrapezoidProfile.State(fixedAngle, 0);
+    }
+  }
   
+  public double getCurrentAngle() {
+    return m_pivotEncoder.getPosition();
+  }
+
+  public boolean isAtGoal() {
+    return MathUtil.isNear(m_setAngle, getCurrentAngle(), Constants.PivotConstants.kPivotToleranceRadians);
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_currentState = m_pivotProfile.calculate(Constants.robotPeriodTime, m_currentState, m_targetState);
-    double calculatedFF = m_pivotFeedForward.calculate(m_currentState.position, m_currentState.velocity);
-    m_pivotPidController.setReference(m_currentState.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, calculatedFF);
+    if(RobotMap.P_ENABLED) {
+      m_currentState = m_pivotProfile.calculate(Constants.robotPeriodTime, m_currentState, m_targetState);
+      double calculatedFF = m_pivotFeedForward.calculate(m_currentState.position, m_currentState.velocity);
+      m_pivotPidController.setReference(m_currentState.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, calculatedFF);
+    }
   }
 }

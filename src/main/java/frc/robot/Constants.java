@@ -165,7 +165,20 @@ public final class Constants {
   }
 
   public static final class PivotConstants {
+    public static final boolean kPivotTuningMode = false;
+    
     public static final double kPivotGearRatio = 1.0/48.0;
     public static final double kPivotConversionFactor = 2 * Math.PI * kPivotGearRatio;
+    public static final double kPivotSpeedConversionFactor = kPivotConversionFactor / 60;
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kG = 0;
+    public static final double kS = 0;
+    public static final double kV = 0;
+
+    public static final double kMinAngle = 0;
+    public static final double kMaxAngle = Math.PI / 2;
+    public static final double kPivotToleranceRadians = 0.1;
   }
 }
