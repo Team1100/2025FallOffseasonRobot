@@ -23,6 +23,7 @@ import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.testingdashboard.SubsystemBase;
 import frc.robot.testingdashboard.TDNumber;
+import frc.robot.utils.DioLimitSwitch;
 
 public class PivotyThing extends SubsystemBase {
 
@@ -32,6 +33,9 @@ public class PivotyThing extends SubsystemBase {
   SparkMaxConfig m_SparkMaxConfig;
   RelativeEncoder m_pivotEncoder;
   SparkClosedLoopController m_pivotPidController;
+
+  DioLimitSwitch m_lowLimitSwitch;
+  boolean m_closeLoopControlOn = true;
 
   ArmFeedforward m_pivotFeedForward;
   TrapezoidProfile m_pivotProfile;
@@ -64,6 +68,7 @@ public class PivotyThing extends SubsystemBase {
       m_PSparkMax = new SparkMax(RobotMap.P_MOTOR_CAN_ID, MotorType.kBrushless);
       m_SparkMaxConfig = new SparkMaxConfig();
       m_SparkMaxConfig
+        .inverted(false)//May need to change this
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(40, 60);
       m_SparkMaxConfig.closedLoop
@@ -71,8 +76,11 @@ public class PivotyThing extends SubsystemBase {
         .positionWrappingEnabled(false)
         .pid(Constants.PivotConstants.kP, Constants.PivotConstants.kI, Constants.PivotConstants.kD);
       m_SparkMaxConfig.encoder
+        .inverted(false)//May need to change this
         .positionConversionFactor(Constants.PivotConstants.kPivotConversionFactor)
         .velocityConversionFactor(Constants.PivotConstants.kPivotSpeedConversionFactor);
+
+      m_lowLimitSwitch = new DioLimitSwitch(RobotMap.P_LIMIT_SWITCH_DIO, true);
 
       m_PSparkMax.configure(m_SparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       m_pivotEncoder = m_PSparkMax.getEncoder();
@@ -104,6 +112,10 @@ public class PivotyThing extends SubsystemBase {
       m_targetState = new TrapezoidProfile.State(fixedAngle, 0);
     }
   }
+
+  public double getTargetAngle() {
+    return m_setAngle;
+  }
   
   public double getCurrentAngle() {
     return m_pivotEncoder.getPosition();
@@ -114,9 +126,48 @@ public class PivotyThing extends SubsystemBase {
   }
 
   private void updateTD() {
-    td_pivotCurrentOutput.set(m_PSparkMax.getAppliedOutput());
+    td_pivotCurrentOutput.set(m_PSparkMax.getOutputCurrent());
     td_pivotCurrentAngle.set(getCurrentAngle());
     td_pivotTargetAngle.set(m_setAngle);
+  }
+
+  private void handleLowLimitTriggered() {
+    double angle = getCurrentAngle();
+    if(m_PSparkMax.getAppliedOutput() < 0){
+      m_PSparkMax.set(0);
+    }
+    if(!MathUtil.isNear(0, angle, Constants.PivotConstants.kPivotToleranceRadians)){
+      m_pivotEncoder.setPosition(0);
+    }
+    if(m_setAngle < angle){
+      m_currentState = new TrapezoidProfile.State(0, 0);
+      setTargetAngle(0);
+    }
+  }
+
+  public void reZero() {
+    disableClosedLoop();
+    setPivotSpeed(Constants.PivotConstants.kReZeroSpeed);
+  }
+
+  public void setPivotSpeed(double speed) {
+    if(!m_closeLoopControlOn) {
+      m_PSparkMax.set(speed);
+    }
+  }
+
+  public void disableClosedLoop() {
+    m_closeLoopControlOn = false;
+  }
+  public void enableClosedLoop() {
+    double currentAngle = getCurrentAngle();
+    m_currentState = new TrapezoidProfile.State(currentAngle, 0);
+    setTargetAngle(currentAngle);
+    m_closeLoopControlOn = true;
+  }
+
+  public boolean lowLimitHit() {
+    return m_lowLimitSwitch.get();
   }
 
   @SuppressWarnings("unused")
@@ -172,9 +223,14 @@ public class PivotyThing extends SubsystemBase {
 
     // This method will be called once per scheduler run
     if(RobotMap.P_ENABLED) {
-      m_currentState = m_pivotProfile.calculate(Constants.robotPeriodTime, m_currentState, m_targetState);
-      double calculatedFF = m_pivotFeedForward.calculate(m_currentState.position, m_currentState.velocity);
-      m_pivotPidController.setReference(m_currentState.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, calculatedFF);
+      if(m_lowLimitSwitch.get()) {
+        handleLowLimitTriggered();
+      }
+      if(m_closeLoopControlOn){
+        m_currentState = m_pivotProfile.calculate(Constants.robotPeriodTime, m_currentState, m_targetState);
+        double calculatedFF = m_pivotFeedForward.calculate(m_currentState.position, m_currentState.velocity);
+        m_pivotPidController.setReference(m_currentState.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, calculatedFF);
+      }
     }
     
     updateTD();

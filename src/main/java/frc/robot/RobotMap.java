@@ -97,6 +97,7 @@ public class RobotMap {
   // [P]ivot Subsystem
   public static boolean P_ENABLED = true;
   public static int P_MOTOR_CAN_ID = RoboRioMap.CAN_10;
+  public static int P_LIMIT_SWITCH_DIO = RoboRioMap.DIO_9;
 
 
   // [V]ision

@@ -221,6 +221,8 @@ public final class Constants {
 
     public static final double kMinAngle = 0;
     public static final double kMaxAngle = Math.PI / 2;
-    public static final double kPivotToleranceRadians = 0.1;
+    public static final double kPivotToleranceRadians = 0.02;
+
+    public static final double kReZeroSpeed = -0.1;
   }
 }
