@@ -5,8 +5,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import frc.robot.RobotMap;
 import frc.robot.testingdashboard.SubsystemBase;
 import frc.robot.testingdashboard.TDNumber;
@@ -29,8 +29,11 @@ public class Intake extends SubsystemBase{
     private Intake(){
         super("Intake");
         if (RobotMap.I_ENABLED){
-            m_ISparkMax = new SparkMax(-1, MotorType.kBrushless);
+            m_ISparkMax = new SparkMax(RobotMap.I_MOTOR_CAN_ID, MotorType.kBrushless);
             m_SparkMaxConfig = new SparkMaxConfig();
+            m_SparkMaxConfig
+                .idleMode(IdleMode.kCoast)
+                .smartCurrentLimit(25, 60);
             m_ISparkMax.configure(m_SparkMaxConfig,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
             td_currentOutput = new TDNumber(this, "Current", "Current");
