@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.opencv.core.Mat;
+
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -31,6 +33,8 @@ import frc.robot.utils.TargetPose;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final double robotPeriodTime = 0.02;
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final String whoLetTheDogsOut = "alan";
@@ -158,5 +162,10 @@ public final class Constants {
 
   public static final class IntakeConstants {
     public static final double kIntakeSpeed = 0.5;
+  }
+
+  public static final class PivotConstants {
+    public static final double kPivotGearRatio = 1.0/48.0;
+    public static final double kPivotConversionFactor = 2 * Math.PI * kPivotGearRatio;
   }
 }
