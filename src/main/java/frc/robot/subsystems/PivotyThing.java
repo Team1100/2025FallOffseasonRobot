@@ -47,6 +47,9 @@ public class PivotyThing extends SubsystemBase {
   TDNumber td_pivotCurrentOutput;
   TDNumber td_pivotCurrentAngle;
   TDNumber td_pivotTargetAngle;
+  TDNumber td_pivotVelocity;
+  TDNumber td_pivotProfilePosition;
+  TDNumber td_pivotProfileVelocity;
   
   double m_kP;
   TDNumber td_kP;
@@ -88,7 +91,19 @@ public class PivotyThing extends SubsystemBase {
       m_targetState = new TrapezoidProfile.State(m_pivotEncoder.getPosition(), 0);
       m_setAngle = m_pivotEncoder.getPosition();
 
-      td_pivotCurrentOutput = new TDNumber(this, "Funnel", "Motor Current");
+      td_pivotCurrentOutput = new TDNumber(this, "Motor", "Motor Current");
+      td_pivotCurrentAngle = new TDNumber(this, "Position", "Current Angle");
+      td_pivotTargetAngle = new TDNumber(this, "Position", "Target Angle");
+      td_pivotVelocity = new TDNumber(this, "Position", "Current Velocity");
+      td_pivotProfilePosition = new TDNumber(this, "Position", "Profile Angle");
+      td_pivotProfileVelocity = new TDNumber(this, "Position", "Profile Velocity");
+
+      td_kP = new TDNumber(this, "Tuning", "kP");
+      td_kI = new TDNumber(this, "Tuning", "kI");
+      td_kD = new TDNumber(this, "Tuning", "kD");
+      td_kS = new TDNumber(this, "Tuning", "kS");
+      td_kG = new TDNumber(this, "Tuning", "kG");
+      td_kV = new TDNumber(this, "Tuning", "kV");
 
       m_pivotProfile = new TrapezoidProfile(
           new TrapezoidProfile.Constraints(
@@ -123,12 +138,6 @@ public class PivotyThing extends SubsystemBase {
 
   public boolean isAtGoal() {
     return MathUtil.isNear(m_setAngle, getCurrentAngle(), Constants.PivotConstants.kPivotToleranceRadians);
-  }
-
-  private void updateTD() {
-    td_pivotCurrentOutput.set(m_PSparkMax.getOutputCurrent());
-    td_pivotCurrentAngle.set(getCurrentAngle());
-    td_pivotTargetAngle.set(m_setAngle);
   }
 
   private void handleLowLimitTriggered() {
@@ -168,6 +177,13 @@ public class PivotyThing extends SubsystemBase {
 
   public boolean lowLimitHit() {
     return m_lowLimitSwitch.get();
+  }
+
+  private void updateTD() {
+    td_pivotCurrentOutput.set(m_PSparkMax.getOutputCurrent());
+    td_pivotCurrentAngle.set(getCurrentAngle());
+    td_pivotTargetAngle.set(m_setAngle);
+    td_pivotVelocity.set(m_pivotEncoder.getVelocity());
   }
 
   @SuppressWarnings("unused")
@@ -228,6 +244,8 @@ public class PivotyThing extends SubsystemBase {
       }
       if(m_closeLoopControlOn){
         m_currentState = m_pivotProfile.calculate(Constants.robotPeriodTime, m_currentState, m_targetState);
+        td_pivotProfilePosition.set(m_currentState.position);
+        td_pivotProfileVelocity.set(m_currentState.velocity);
         double calculatedFF = m_pivotFeedForward.calculate(m_currentState.position, m_currentState.velocity);
         m_pivotPidController.setReference(m_currentState.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, calculatedFF);
       }
