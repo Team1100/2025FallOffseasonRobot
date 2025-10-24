@@ -6,8 +6,15 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.subsystems.Drive;
+import frc.robot.testingdashboard.TDSendable;
 import frc.robot.testingdashboard.TestingDashboard;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -20,18 +27,25 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final Drive m_drive;
+  private final SendableChooser<Command> m_autoChooser;
+  
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     RobotMap.init();
     
-    m_drive = Drive.getInstance();
+    // initialize the drive (and the AutoBuilder)
+    Drive.getInstance().setDefaultCommand(new SwerveDrive());
+
+    // the AutoBuilder is configured in the Drive constructor. That must be done first.
+    m_autoChooser = AutoBuilder.buildAutoChooser("Center Auto");
+    new TDSendable(Drive.getInstance(), "Auto Commands", "Chooser", m_autoChooser);
 
     // Configure the trigger bindings
     OI.getInstance().configureBindings();
 
     // Create testing dashboard
     TestingDashboard.getInstance().createTestingDashboard();
+    SmartDashboard.putData(m_autoChooser);
   }
 
   /**
@@ -39,5 +53,8 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {return new InstantCommand();}
+  public Command getAutonomousCommand()
+  {
+    return m_autoChooser.getSelected();
+  }
 }

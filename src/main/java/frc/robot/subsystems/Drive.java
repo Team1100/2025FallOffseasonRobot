@@ -29,9 +29,11 @@ import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.Constants;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.DriveModuleConstants;
 import frc.robot.RobotMap;
 import frc.robot.testingdashboard.SubsystemBase;
 import frc.robot.testingdashboard.TDNumber;
@@ -43,13 +45,13 @@ public class Drive extends SubsystemBase {
   
 
   private final MAXSwerveModule m_frontleft = new MAXSwerveModule(
-    RobotMap.D_FRONT_LEFT_DRIVE_MOTOR_CAN_ID, RobotMap.D_FRONT_LEFT_TURN_MOTOR_CAN_ID, Constants.DriveModuleConstants.kFrontLeftChassisAngularOffset);
+    RobotMap.D_FRONT_LEFT_DRIVE_MOTOR_CAN_ID, RobotMap.D_FRONT_LEFT_TURN_MOTOR_CAN_ID, DriveModuleConstants.kFrontLeftChassisAngularOffset);
   private final MAXSwerveModule m_frontright = new MAXSwerveModule(
-    RobotMap.D_FRONT_RIGHT_DRIVE_MOTOR_CAN_ID, RobotMap.D_FRONT_RIGHT_TURN_MOTOR_CAN_ID, Constants.DriveModuleConstants.kFrontRightChassisAngularOffset);
+    RobotMap.D_FRONT_RIGHT_DRIVE_MOTOR_CAN_ID, RobotMap.D_FRONT_RIGHT_TURN_MOTOR_CAN_ID, DriveModuleConstants.kFrontRightChassisAngularOffset);
   private final MAXSwerveModule m_backleft = new MAXSwerveModule(
-    RobotMap.D_BACK_LEFT_DRIVE_MOTOR_CAN_ID, RobotMap.D_BACK_LEFT_TURN_MOTOR_CAN_ID, Constants.DriveModuleConstants.kBackLeftChassisAngularOffset);
+    RobotMap.D_BACK_LEFT_DRIVE_MOTOR_CAN_ID, RobotMap.D_BACK_LEFT_TURN_MOTOR_CAN_ID, DriveModuleConstants.kBackLeftChassisAngularOffset);
   private final MAXSwerveModule m_backright = new MAXSwerveModule(
-    RobotMap.D_BACK_RIGHT_DRIVE_MOTOR_CAN_ID, RobotMap.D_BACK_RIGHT_TURN_MOTOR_CAN_ID, Constants.DriveModuleConstants.kBackRightChassisAngularOffset);
+    RobotMap.D_BACK_RIGHT_DRIVE_MOTOR_CAN_ID, RobotMap.D_BACK_RIGHT_TURN_MOTOR_CAN_ID, DriveModuleConstants.kBackRightChassisAngularOffset);
 
   private final ADIS16470_IMU m_Gyro = new ADIS16470_IMU();  
   private final Field2d m_Field;
@@ -101,7 +103,7 @@ public class Drive extends SubsystemBase {
     super("Drive");
 
     m_DrivePoseEstimator = new SwerveDrivePoseEstimator(
-      Constants.DriveConstants.kKinematics,
+      DriveConstants.kKinematics,
       Rotation2d.fromDegrees(m_Gyro.getAngle(IMUAxis.kZ)),
       new SwerveModulePosition[] {
         m_frontleft.getPosition(),
@@ -141,17 +143,17 @@ public class Drive extends SubsystemBase {
       td_backRightDriveCurrent = new TDNumber(this, "Motor Electrical Currents","Back Right Drive Current");
       td_backRightTurnCurrent = new TDNumber(this, "Motor Electrical Currents","Back Right Turning Current");
 
-      DCMotor neovortex = DCMotor.getNEO(1).withReduction(Constants.DriveModuleConstants.kDrivingMotorReduction);
+      DCMotor neo = DCMotor.getNEO(1).withReduction(DriveModuleConstants.kDrivingMotorReduction);
 
-      ModuleConfig kSwerveModuleConfig = new ModuleConfig(Constants.DriveModuleConstants.kWheelDiameterMeters/2, Constants.DriveConstants.kMaxSpeedMetersPerSecond, 
-      Constants.AutoConstants.kPathFollowerWheelCoeficientFriction, neovortex, Constants.DriveModuleConstants.kDrivingMotorCurrentLimit, 4);
+      ModuleConfig kSwerveModuleConfig = new ModuleConfig(DriveModuleConstants.kWheelDiameterMeters/2, DriveConstants.kMaxSpeedMetersPerSecond, 
+      AutoConstants.kPathFollowerWheelCoeficientFriction, neo, DriveModuleConstants.kDrivingMotorCurrentLimit, 4);
       AutoBuilder.configure(
         this::getPose, // Robot pose supplier
         this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
         this::getMeasuredSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-        new PPHolonomicDriveController(Constants.AutoConstants.kPathFollowerTranslationPID, Constants.AutoConstants.kPathFollowerRotationPID),
-        new RobotConfig(Constants.AutoConstants.kPathFollowerMass, Constants.AutoConstants.kPathFollowerMomentOfInertia, kSwerveModuleConfig, Constants.DriveModuleConstants.m_ModulePositions),
+        new PPHolonomicDriveController(AutoConstants.kPathFollowerTranslationPID, AutoConstants.kPathFollowerRotationPID),
+        new RobotConfig(AutoConstants.kPathFollowerMass, AutoConstants.kPathFollowerMomentOfInertia, kSwerveModuleConfig, DriveModuleConstants.m_ModulePositions),
         () -> {
           // Boolean supplier that controls when the path will be mirrored for the red alliance
           // This will flip the path being followed to the red side of the field.
@@ -215,11 +217,11 @@ public class Drive extends SubsystemBase {
     moduleStates[2] = m_backleft.getState();
     moduleStates[3] = m_backright.getState();
 
-    return Constants.DriveConstants.kKinematics.toChassisSpeeds(moduleStates);
+    return DriveConstants.kKinematics.toChassisSpeeds(moduleStates);
   }
 
   private void setModuleStates(SwerveModuleState[] desiredStates) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.DriveConstants.kMaxSpeedMetersPerSecond);
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
     m_frontleft.setDesiredState(desiredStates[0]);
     m_frontright.setDesiredState(desiredStates[1]);
     m_backleft.setDesiredState(desiredStates[2]);
@@ -228,14 +230,15 @@ public class Drive extends SubsystemBase {
 
   public void drive(ChassisSpeeds speeds) {
     ChassisSpeeds limitSpeeds = limitRates(speeds);
-    var swerveModuleStates = Constants.DriveConstants.kKinematics.toSwerveModuleStates(limitSpeeds);
+    m_limitSpeeds = limitSpeeds;
+    var swerveModuleStates = DriveConstants.kKinematics.toSwerveModuleStates(limitSpeeds);
     setModuleStates(swerveModuleStates);
   }
 
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    double xSpeedCommanded = xSpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
-    double ySpeedCommanded = ySpeed * Constants.DriveConstants.kMaxSpeedMetersPerSecond;
-    double rotCommanded = rot * Constants.DriveConstants.kMaxAngularSpeed;
+    double xSpeedCommanded = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    double ySpeedCommanded = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    double rotCommanded = rot * DriveConstants.kMaxAngularSpeed;
 
     td_xInput.set(xSpeedCommanded);
     td_yInput.set(ySpeedCommanded);
@@ -254,17 +257,17 @@ public class Drive extends SubsystemBase {
        Math.abs(commandedSpeeds.vyMetersPerSecond) > 1e-6){
       direction = new Rotation2d(commandedSpeeds.vxMetersPerSecond, commandedSpeeds.vyMetersPerSecond);
     }
-    double limitedSpeed = Math.min(linearSpeed, Constants.DriveConstants.kMaxSpeedMetersPerSecond);
+    double limitedSpeed = Math.min(linearSpeed, DriveConstants.kMaxSpeedMetersPerSecond);
     double limitedTheta = MathUtil.clamp(commandedSpeeds.omegaRadiansPerSecond, 
-                                            -Constants.DriveConstants.kMaxSpeedMetersPerSecond, 
-                                            Constants.DriveConstants.kMaxAngularSpeed);
+                                            -DriveConstants.kMaxSpeedMetersPerSecond, 
+                                            DriveConstants.kMaxAngularSpeed);
     
     Translation2d linearVelocity = (new Pose2d(new Translation2d(), direction)
                                       .transformBy(new Transform2d(new Translation2d(limitedSpeed, 0.0), new Rotation2d()))).getTranslation();
                         
     //Apply Acceleration Limits
     double currentTime = WPIUtilJNI.now() * 1e-6;
-    double accelerationDif = Constants.DriveConstants.kMaxAccelerationMetersPerSecondSquared * (currentTime-m_prevTime);
+    double accelerationDif = DriveConstants.kMaxAccelerationMetersPerSecondSquared * (currentTime-m_prevTime);
     double xSpeed = MathUtil.clamp(linearVelocity.getX(),
                                   m_lastSpeeds.vxMetersPerSecond - accelerationDif,
                                   m_lastSpeeds.vxMetersPerSecond + accelerationDif);
@@ -273,7 +276,7 @@ public class Drive extends SubsystemBase {
                                  m_lastSpeeds.vyMetersPerSecond - accelerationDif,
                                  m_lastSpeeds.vyMetersPerSecond + accelerationDif);
 
-    double thetaAccelDif = Constants.DriveConstants.kMaxAngularAcceleration * (currentTime - m_prevTime);
+    double thetaAccelDif = DriveConstants.kMaxAngularAcceleration * (currentTime - m_prevTime);
     double thetaSpeed = MathUtil.clamp(limitedTheta,
                                  m_lastSpeeds.omegaRadiansPerSecond - thetaAccelDif,
                                  m_lastSpeeds.omegaRadiansPerSecond + thetaAccelDif);
@@ -332,5 +335,23 @@ public class Drive extends SubsystemBase {
     });
     updateTD();
     super.periodic();
+  }
+
+  public void simulationPeriodic() {
+    double now = Timer.getFPGATimestamp();
+
+    Pose2d lastPose = getPose();
+    if (m_driveTime != 0 && m_limitSpeeds != null) {
+      ChassisSpeeds fieldRelativSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_limitSpeeds, lastPose.getRotation());
+      double deltax = fieldRelativSpeeds.vxMetersPerSecond * (now - m_driveTime);
+      double deltay = fieldRelativSpeeds.vyMetersPerSecond * (now - m_driveTime);
+      Rotation2d rot = new Rotation2d(fieldRelativSpeeds.omegaRadiansPerSecond * (now - m_driveTime));
+      Translation2d translation = new Translation2d(deltax, deltay);
+      Pose2d newPose = new Pose2d(
+        lastPose.getTranslation().plus(translation), 
+        lastPose.getRotation().plus(rot));
+      resetOdometry(newPose);          
+    }
+    m_driveTime = now;
   }
 }
