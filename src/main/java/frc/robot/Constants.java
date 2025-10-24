@@ -43,7 +43,7 @@ public final class Constants {
   public static class DriveModuleConstants {
   public static final double kWheelDiameterMeters = 0.0762;
   public static final double D_ANGLE_TOLERANCE_DEGREES = 2.5;
-  public static final int kDrivingMotorPinionTeeth = 12;
+  public static final int kDrivingMotorPinionTeeth = 13;
   public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
 
   public static final double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI)
@@ -58,13 +58,13 @@ public final class Constants {
     public static final double kTurningEncoderPositionPIDMaxInput = kTurningEncoderPositionFactor; // radians
 
 
-    public static final double kVortexFreeSpeedRpm = 6784;
+    public static final double kNEOFreeSpeedRpm = 5676;
 
      // Invert the turning encoder, since the output shaft rotates in the opposite direction of
     // the steering motor in the MAXSwerve Module.
     public static final boolean kTurningEncoderInverted = true;
     // Calculations required for driving motor conversion factors and feed forward
-    public static final double kDrivingMotorFreeSpeedRps = kVortexFreeSpeedRpm / 60;
+    public static final double kDrivingMotorFreeSpeedRps = kNEOFreeSpeedRpm / 60;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
    
     public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
@@ -210,6 +210,8 @@ public final class Constants {
     public static final double kPivotGearRatio = 1.0/48.0;
     public static final double kPivotConversionFactor = 2 * Math.PI * kPivotGearRatio;
     public static final double kPivotSpeedConversionFactor = kPivotConversionFactor / 60;
+    public static final double kPivotMaxSpeedRadsPerSec = Math.PI / 2;
+    public static final double kPivotMaxAccelRadsPerSecSq = Math.PI;
     public static final double kP = 0;
     public static final double kI = 0;
     public static final double kD = 0;
@@ -219,6 +221,8 @@ public final class Constants {
 
     public static final double kMinAngle = 0;
     public static final double kMaxAngle = Math.PI / 2;
-    public static final double kPivotToleranceRadians = 0.1;
+    public static final double kPivotToleranceRadians = 0.02;
+
+    public static final double kReZeroSpeed = -0.1;
   }
 }
