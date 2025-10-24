@@ -28,7 +28,7 @@ public class OI {
             yInput=m_driverController::getLeftX;
         }
         else{
-            xInput=m_driverController::getLeftX;
+            xInput = ()->-m_driverController.getLeftX();
             yInput=m_driverController::getLeftY;
         }
         m_DriveInputs = new SwerveDriveInputs(xInput, yInput, m_driverController::getRightX);
