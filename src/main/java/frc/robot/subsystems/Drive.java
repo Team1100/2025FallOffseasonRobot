@@ -141,10 +141,10 @@ public class Drive extends SubsystemBase {
       td_backRightDriveCurrent = new TDNumber(this, "Motor Electrical Currents","Back Right Drive Current");
       td_backRightTurnCurrent = new TDNumber(this, "Motor Electrical Currents","Back Right Turning Current");
 
-      DCMotor neovortex = DCMotor.getNEO(1).withReduction(Constants.DriveModuleConstants.kDrivingMotorReduction);
+      DCMotor NEO = DCMotor.getNEO(1).withReduction(Constants.DriveModuleConstants.kDrivingMotorReduction);
 
       ModuleConfig kSwerveModuleConfig = new ModuleConfig(Constants.DriveModuleConstants.kWheelDiameterMeters/2, Constants.DriveConstants.kMaxSpeedMetersPerSecond, 
-      Constants.AutoConstants.kPathFollowerWheelCoeficientFriction, neovortex, Constants.DriveModuleConstants.kDrivingMotorCurrentLimit, 4);
+      Constants.AutoConstants.kPathFollowerWheelCoeficientFriction, NEO, Constants.DriveModuleConstants.kDrivingMotorCurrentLimit, 4);
       AutoBuilder.configure(
         this::getPose, // Robot pose supplier
         this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)

@@ -58,13 +58,13 @@ public final class Constants {
     public static final double kTurningEncoderPositionPIDMaxInput = kTurningEncoderPositionFactor; // radians
 
 
-    public static final double kVortexFreeSpeedRpm = 6784;
+    public static final double kNEOFreeSpeedRpm = 5676;
 
      // Invert the turning encoder, since the output shaft rotates in the opposite direction of
     // the steering motor in the MAXSwerve Module.
     public static final boolean kTurningEncoderInverted = true;
     // Calculations required for driving motor conversion factors and feed forward
-    public static final double kDrivingMotorFreeSpeedRps = kVortexFreeSpeedRpm / 60;
+    public static final double kDrivingMotorFreeSpeedRps = kNEOFreeSpeedRpm / 60;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
    
     public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
