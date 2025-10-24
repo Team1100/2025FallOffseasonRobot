@@ -223,6 +223,11 @@ public final class Constants {
     public static final double kMaxAngle = Math.PI / 2;
     public static final double kPivotToleranceRadians = 0.02;
 
+    public static final double kCoralIntakeAngle = 0;
+    public static final double kCoralScoreAngle = 0;
+    public static final double kAlgaeIntakeAngle = 0;
+    public static final double kAlgaeScoreAngle = 0;
+
     public static final double kReZeroSpeed = -0.1;
   }
 }
