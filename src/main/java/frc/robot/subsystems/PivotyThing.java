@@ -79,9 +79,10 @@ public class PivotyThing extends SubsystemBase {
         .positionWrappingEnabled(false)
         .pid(Constants.PivotConstants.kP, Constants.PivotConstants.kI, Constants.PivotConstants.kD);
       m_SparkMaxConfig.encoder
-        .inverted(false)//May need to change this
         .positionConversionFactor(Constants.PivotConstants.kPivotConversionFactor)
         .velocityConversionFactor(Constants.PivotConstants.kPivotSpeedConversionFactor);
+
+      m_pivotPidController = m_PSparkMax.getClosedLoopController();
 
       m_lowLimitSwitch = new DioLimitSwitch(RobotMap.P_LIMIT_SWITCH_DIO, true);
 
