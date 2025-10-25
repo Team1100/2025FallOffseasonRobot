@@ -38,7 +38,6 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
-    public static final String whoLetTheDogsOut = "alan";
   }
 
   public static class DriveModuleConstants {
@@ -129,6 +128,7 @@ public final class Constants {
 
   public static class OIConstants {
     public static final double kDriveDeadband = 0.05;
+    public static final double kOperatorDeadband = 0.075;
     public static final boolean kDriveIsFieldRelative = true;
   }
 
@@ -206,19 +206,19 @@ public final class Constants {
   }
 
   public static final class PivotConstants {
-    public static final boolean kPivotTuningMode = true;
+    public static final boolean kPivotTuningMode = false;
     
     public static final double kPivotGearRatio = 1.0/48.0;
     public static final double kPivotConversionFactor = 2 * Math.PI * kPivotGearRatio;
     public static final double kPivotSpeedConversionFactor = kPivotConversionFactor / 60;
     public static final double kPivotMaxSpeedRadsPerSec = Math.PI / 2;
-    public static final double kPivotMaxAccelRadsPerSecSq = Math.PI;
-    public static final double kP = 0;
+    public static final double kPivotMaxAccelRadsPerSecSq = 2 * Math.PI;
+    public static final double kP = 0.8;
     public static final double kI = 0;
     public static final double kD = 0;
-    public static final double kG = 0;
-    public static final double kS = 0;
-    public static final double kV = 0;
+    public static final double kG = -0.5;
+    public static final double kS = 0.15;
+    public static final double kV = 1.05;
 
     public static final double kMinAngle = -Math.PI / 2;
     public static final double kMaxAngle = 0;
@@ -227,12 +227,13 @@ public final class Constants {
     // setpoints need to be negative
     // :]
     public static final double kCoralIntakeAngle = 0;
-    public static final double kCoralScoreAngle = 0;
-    public static final double kAlgaeIntakeAngle = 0;
-    public static final double kAlgaeScoreAngle = 0;
+    public static final double kCoralScoreAngle = -0.8;
+    public static final double kAlgaeIntakeAngle = -0.5;
+    public static final double kAlgaeScoreAngle = -0.7;
 
     public static final double kReZeroSpeed = -0.1;
 
     public static final double kPivotManualSpeedFactor = 0.25;
+    public static final double kPivotMaxAngleIncrementRads = 0.03;
   }
 }

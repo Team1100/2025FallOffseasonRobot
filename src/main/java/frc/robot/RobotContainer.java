@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.commands.drive.ZeroHeading;
@@ -16,7 +14,7 @@ import frc.robot.commands.pivotything.AlgaeScoreAngle;
 import frc.robot.commands.pivotything.AngleTDNumber;
 import frc.robot.commands.pivotything.CoralIntakeAngle;
 import frc.robot.commands.pivotything.CoralScoreAngle;
-import frc.robot.commands.pivotything.PivotManualControl;
+import frc.robot.commands.pivotything.PivotManualAngleControl;
 import frc.robot.commands.pivotything.Rezero;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
@@ -28,7 +26,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -48,23 +45,27 @@ public class RobotContainer {
     
     // initialize the drive (and the AutoBuilder)
     m_drive = Drive.getInstance();
-    m_drive.setDefaultCommand(new SwerveDrive());
 
     // the AutoBuilder is configured in the Drive constructor. That must be done first.
     m_autoChooser = AutoBuilder.buildAutoChooser("Center Auto");
     new TDSendable(m_drive, "Auto Commands", "Chooser", m_autoChooser);
     m_pivot = PivotyThing.getInstance();
-    m_pivot.setDefaultCommand(new PivotManualControl());
     m_intake = Intake.getInstance();
 
+    /*
+    * Register the commands before configuring bindings and setting defaults
+    * so the TD Commands aren't the same as the bound ones
+    */
+    registerCommands();
+    //set default commands
+    m_drive.setDefaultCommand(new SwerveDrive());
+    m_pivot.setDefaultCommand(new PivotManualAngleControl());
     // Configure the trigger bindings
     OI.getInstance().configureBindings();
 
     // Create testing dashboard
     TestingDashboard.getInstance().createTestingDashboard();
     SmartDashboard.putData(m_autoChooser);
-
-    registerCommands();
   }
 
   private void registerCommands() {
@@ -77,6 +78,7 @@ public class RobotContainer {
     new Rezero();
     new ZeroHeading();
     new AngleTDNumber();
+    new SwerveDrive();
   }
 
   /**
