@@ -38,7 +38,6 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
-    public static final String whoLetTheDogsOut = "alan";
   }
 
   public static class DriveModuleConstants {
@@ -129,6 +128,7 @@ public final class Constants {
 
   public static class OIConstants {
     public static final double kDriveDeadband = 0.05;
+    public static final double kOperatorDeadband = 0.075;
     public static final boolean kDriveIsFieldRelative = true;
   }
 
@@ -234,5 +234,6 @@ public final class Constants {
     public static final double kReZeroSpeed = -0.1;
 
     public static final double kPivotManualSpeedFactor = 0.25;
+    public static final double kPivotMaxAngleIncrementRads = 0.03;
   }
 }
