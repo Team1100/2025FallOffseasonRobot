@@ -354,4 +354,8 @@ public class Drive extends SubsystemBase {
     }
     m_driveTime = now;
   }
+
+  public void zeroHeading() {
+    m_Gyro.reset();
+  }
 }
