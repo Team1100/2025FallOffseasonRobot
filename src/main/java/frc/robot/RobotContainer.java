@@ -8,6 +8,16 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.commands.drive.SwerveDrive;
+import frc.robot.commands.drive.ZeroHeading;
+import frc.robot.commands.intake.Consume;
+import frc.robot.commands.intake.Expel;
+import frc.robot.commands.pivotything.AlgaeIntakeAngle;
+import frc.robot.commands.pivotything.AlgaeScoreAngle;
+import frc.robot.commands.pivotything.AngleTDNumber;
+import frc.robot.commands.pivotything.CoralIntakeAngle;
+import frc.robot.commands.pivotything.CoralScoreAngle;
+import frc.robot.commands.pivotything.PivotManualControl;
+import frc.robot.commands.pivotything.Rezero;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.PivotyThing;
@@ -44,6 +54,7 @@ public class RobotContainer {
     m_autoChooser = AutoBuilder.buildAutoChooser("Center Auto");
     new TDSendable(m_drive, "Auto Commands", "Chooser", m_autoChooser);
     m_pivot = PivotyThing.getInstance();
+    m_pivot.setDefaultCommand(new PivotManualControl());
     m_intake = Intake.getInstance();
 
     // Configure the trigger bindings
@@ -52,6 +63,20 @@ public class RobotContainer {
     // Create testing dashboard
     TestingDashboard.getInstance().createTestingDashboard();
     SmartDashboard.putData(m_autoChooser);
+
+    registerCommands();
+  }
+
+  private void registerCommands() {
+    new Consume();
+    new Expel();
+    new AlgaeIntakeAngle();
+    new AlgaeScoreAngle();
+    new CoralIntakeAngle();
+    new CoralScoreAngle();
+    new Rezero();
+    new ZeroHeading();
+    new AngleTDNumber();
   }
 
   /**

@@ -91,7 +91,7 @@ public class RobotMap {
 
   // [I]ntake Subsystem
   public static boolean I_ENABLED = true;
-  public static int I_MOTOR_CAN_ID = RoboRioMap.CAN_11;
+  public static int I_MOTOR_CAN_ID = RoboRioMap.CAN_12;
 
 
   // [P]ivot Subsystem

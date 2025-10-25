@@ -71,7 +71,7 @@ public class PivotyThing extends SubsystemBase {
       m_PSparkMax = new SparkMax(RobotMap.P_MOTOR_CAN_ID, MotorType.kBrushless);
       m_SparkMaxConfig = new SparkMaxConfig();
       m_SparkMaxConfig
-        .inverted(false)//May need to change this
+        .inverted(true)//May need to change this
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(40, 60);
       m_SparkMaxConfig.closedLoop
@@ -143,13 +143,13 @@ public class PivotyThing extends SubsystemBase {
 
   private void handleLowLimitTriggered() {
     double angle = getCurrentAngle();
-    if(m_PSparkMax.getAppliedOutput() < 0){
+    if(m_PSparkMax.getAppliedOutput() > 0){
       m_PSparkMax.set(0);
     }
     if(!MathUtil.isNear(0, angle, Constants.PivotConstants.kPivotToleranceRadians)){
       m_pivotEncoder.setPosition(0);
     }
-    if(m_setAngle < angle){
+    if(m_setAngle > angle){
       m_currentState = new TrapezoidProfile.State(0, 0);
       setTargetAngle(0);
     }
@@ -161,7 +161,7 @@ public class PivotyThing extends SubsystemBase {
   }
 
   public void setPivotSpeed(double speed) {
-    if(!m_closeLoopControlOn) {
+    if(!m_closeLoopControlOn && !(lowLimitHit() && speed > 0)) {
       m_PSparkMax.set(speed);
     }
   }
