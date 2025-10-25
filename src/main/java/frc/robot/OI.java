@@ -16,7 +16,7 @@ public class OI {
     private final CommandXboxController m_driverController =
         new CommandXboxController(OperatorConstants.kDriverControllerPort);
     private final CommandXboxController m_operatorController =
-        new CommandXboxController(OperatorConstants.kDriverControllerPort);
+        new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
     private SwerveDriveInputs m_DriveInputs;
     

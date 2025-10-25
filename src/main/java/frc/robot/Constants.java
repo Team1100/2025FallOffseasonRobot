@@ -37,6 +37,7 @@ public final class Constants {
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
     public static final String whoLetTheDogsOut = "alan";
   }
 
@@ -205,7 +206,7 @@ public final class Constants {
   }
 
   public static final class PivotConstants {
-    public static final boolean kPivotTuningMode = false;
+    public static final boolean kPivotTuningMode = true;
     
     public static final double kPivotGearRatio = 1.0/48.0;
     public static final double kPivotConversionFactor = 2 * Math.PI * kPivotGearRatio;
@@ -219,15 +220,19 @@ public final class Constants {
     public static final double kS = 0;
     public static final double kV = 0;
 
-    public static final double kMinAngle = 0;
-    public static final double kMaxAngle = Math.PI / 2;
+    public static final double kMinAngle = -Math.PI / 2;
+    public static final double kMaxAngle = 0;
     public static final double kPivotToleranceRadians = 0.02;
 
+    // setpoints need to be negative
+    // :]
     public static final double kCoralIntakeAngle = 0;
     public static final double kCoralScoreAngle = 0;
     public static final double kAlgaeIntakeAngle = 0;
     public static final double kAlgaeScoreAngle = 0;
 
     public static final double kReZeroSpeed = -0.1;
+
+    public static final double kPivotManualSpeedFactor = 0.25;
   }
 }
