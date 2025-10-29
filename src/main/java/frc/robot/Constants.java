@@ -203,6 +203,7 @@ public final class Constants {
 
   public static final class IntakeConstants {
     public static final double kIntakeSpeed = 0.5;
+    public static final double kExpelSpeed = 0.5;
   }
 
   public static final class PivotConstants {
@@ -231,7 +232,7 @@ public final class Constants {
     public static final double kAlgaeIntakeAngle = -0.5;
     public static final double kAlgaeScoreAngle = -0.7;
 
-    public static final double kReZeroSpeed = -0.1;
+    public static final double kReZeroSpeed = 0.1;
 
     public static final double kPivotManualSpeedFactor = 0.25;
     public static final double kPivotMaxAngleIncrementRads = 0.03;

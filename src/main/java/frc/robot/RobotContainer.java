@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.commands.drive.SwerveDrive;
+import frc.robot.commands.drive.YoureUnderArrest;
 import frc.robot.commands.drive.ZeroHeading;
 import frc.robot.commands.intake.Consume;
 import frc.robot.commands.intake.Expel;
@@ -46,9 +47,6 @@ public class RobotContainer {
     // initialize the drive (and the AutoBuilder)
     m_drive = Drive.getInstance();
 
-    // the AutoBuilder is configured in the Drive constructor. That must be done first.
-    m_autoChooser = AutoBuilder.buildAutoChooser("Center Auto");
-    new TDSendable(m_drive, "Auto Commands", "Chooser", m_autoChooser);
     m_pivot = PivotyThing.getInstance();
     m_intake = Intake.getInstance();
 
@@ -62,6 +60,10 @@ public class RobotContainer {
     m_pivot.setDefaultCommand(new PivotManualAngleControl());
     // Configure the trigger bindings
     OI.getInstance().configureBindings();
+
+    // the AutoBuilder is configured in the Drive constructor. That must be done first.
+    m_autoChooser = AutoBuilder.buildAutoChooser("Center Auto");
+    new TDSendable(m_drive, "Auto Commands", "Chooser", m_autoChooser);
 
     // Create testing dashboard
     TestingDashboard.getInstance().createTestingDashboard();
@@ -79,6 +81,7 @@ public class RobotContainer {
     new ZeroHeading();
     new AngleTDNumber();
     new SwerveDrive();
+    new YoureUnderArrest();
   }
 
   /**
