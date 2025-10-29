@@ -33,7 +33,7 @@ public class Intake extends SubsystemBase{
             m_SparkMaxConfig = new SparkMaxConfig();
             m_SparkMaxConfig
                 .idleMode(IdleMode.kBrake)
-                .smartCurrentLimit(40, 60);
+                .smartCurrentLimit(50, 60);
             m_SparkMaxConfig.inverted(true);
             m_ISparkMax.configure(m_SparkMaxConfig,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
